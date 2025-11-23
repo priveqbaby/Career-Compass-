@@ -91,34 +91,32 @@ export function KanbanBoard({ applications }: KanbanBoardProps) {
     }
 
     return (
-        <div className="h-full flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-x-auto overflow-y-hidden">
-                <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCorners}
-                    onDragStart={onDragStart}
-                    onDragOver={onDragOver}
-                    onDragEnd={onDragEnd}
-                >
-                    <div className="flex h-full gap-4 p-6 w-full">
-                        {columns.map((col) => (
-                            <KanbanColumn
-                                key={col.id}
-                                id={col.id}
-                                title={col.title}
-                                jobs={applications.filter((job) => job.status === col.id)}
-                            />
-                        ))}
-                    </div>
+        <div className="h-full flex flex-col">
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCorners}
+                onDragStart={onDragStart}
+                onDragOver={onDragOver}
+                onDragEnd={onDragEnd}
+            >
+                <div className="grid grid-cols-5 gap-4 h-full">
+                    {columns.map((col) => (
+                        <KanbanColumn
+                            key={col.id}
+                            id={col.id}
+                            title={col.title}
+                            jobs={applications.filter((job) => job.status === col.id)}
+                        />
+                    ))}
+                </div>
 
-                    {createPortal(
-                        <DragOverlay>
-                            {activeJob && <JobCard job={activeJob} />}
-                        </DragOverlay>,
-                        document.body
-                    )}
-                </DndContext>
-            </div>
+                {createPortal(
+                    <DragOverlay>
+                        {activeJob && <JobCard job={activeJob} />}
+                    </DragOverlay>,
+                    document.body
+                )}
+            </DndContext>
         </div>
     )
 }

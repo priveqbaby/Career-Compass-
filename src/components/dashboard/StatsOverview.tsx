@@ -2,7 +2,11 @@ import { Briefcase, CheckCircle2, Clock, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { useJobStore } from "../../store/useJobStore"
 
-export function StatsOverview() {
+interface StatsOverviewProps {
+    compact?: boolean
+}
+
+export function StatsOverview({ compact = false }: StatsOverviewProps) {
     const { applications } = useJobStore()
 
     const total = applications.length
@@ -11,6 +15,41 @@ export function StatsOverview() {
         ? Math.round((applications.filter(app => ['Interviewing', 'Offer', 'Rejected'].includes(app.status)).length / total) * 100)
         : 0
     const upcomingInterviews = applications.filter(app => app.status === 'Interviewing').length
+
+    if (compact) {
+        return (
+            <div className="grid grid-cols-4 gap-3">
+                <div className="bg-card border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-medium text-muted-foreground">Total</p>
+                        <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
+                    </div>
+                    <p className="text-xl font-bold">{total}</p>
+                </div>
+                <div className="bg-card border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-medium text-muted-foreground">Active</p>
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                    </div>
+                    <p className="text-xl font-bold">{active}</p>
+                </div>
+                <div className="bg-card border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-medium text-muted-foreground">Response</p>
+                        <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
+                    </div>
+                    <p className="text-xl font-bold">{responseRate}%</p>
+                </div>
+                <div className="bg-card border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-medium text-muted-foreground">Interviews</p>
+                        <CheckCircle2 className="h-3.5 w-3.5 text-muted-foreground" />
+                    </div>
+                    <p className="text-xl font-bold">{upcomingInterviews}</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">

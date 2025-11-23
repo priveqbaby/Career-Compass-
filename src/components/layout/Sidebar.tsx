@@ -1,4 +1,4 @@
-import { LayoutDashboard, Calendar, BarChart3 } from "lucide-react"
+import { LayoutDashboard, Calendar, BarChart3, Sparkles, FileText } from "lucide-react"
 import { cn } from "../../lib/utils"
 import type { Page } from "../../App"
 
@@ -28,6 +28,18 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                         label="Dashboard"
                         active={currentPage === 'dashboard'}
                         onClick={() => onNavigate('dashboard')}
+                    />
+                    <NavItem
+                        icon={Sparkles}
+                        label="Discover"
+                        active={currentPage === 'discover'}
+                        onClick={() => onNavigate('discover')}
+                    />
+                    <NavItem
+                        icon={FileText}
+                        label="CV Optimizer"
+                        active={currentPage === 'cv-optimizer'}
+                        onClick={() => onNavigate('cv-optimizer')}
                     />
                     <NavItem
                         icon={Calendar}

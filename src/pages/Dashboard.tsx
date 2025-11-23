@@ -23,10 +23,10 @@ export function Dashboard() {
             transition={{ duration: 0.5 }}
             className="flex flex-col h-full p-8"
         >
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                    <p className="text-muted-foreground mt-2">Track your job search progress</p>
+                    <p className="text-muted-foreground mt-1">Drag and drop cards to update their status</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="relative w-64">
@@ -42,13 +42,11 @@ export function Dashboard() {
                 </div>
             </div>
 
-            <StatsOverview />
+            <div className="mb-3">
+                <StatsOverview compact />
+            </div>
 
-            <div className="flex-1 min-h-0 mt-8 flex flex-col">
-                <div className="mb-4">
-                    <h2 className="text-lg font-semibold">Application Pipeline</h2>
-                    <p className="text-sm text-muted-foreground">Drag and drop cards to update their status</p>
-                </div>
+            <div className="flex-1 min-h-0 flex flex-col">
                 <KanbanBoard applications={filteredApplications} />
             </div>
         </motion.div>
