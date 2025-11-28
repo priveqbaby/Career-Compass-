@@ -1,6 +1,5 @@
 import { useState } from "react"
-import { motion } from "framer-motion"
-import { FileText, Sparkles, TrendingUp, Download } from "lucide-react"
+import { FileText, TrendingUp } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { Textarea } from "../components/ui/textarea"
 import { Label } from "../components/ui/label"
@@ -54,20 +53,14 @@ University of Technology`)
     }
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col h-full p-8"
-        >
+        <div className="flex flex-col h-full p-6 bg-background">
             {/* Header */}
             <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="h-6 w-6 text-primary" />
-                    <h1 className="text-3xl font-bold tracking-tight">CV Optimizer</h1>
-                </div>
-                <p className="text-muted-foreground">
-                    Get AI-powered suggestions to optimize your CV for any job posting
+                <h1 className="text-2xl font-semibold text-foreground mb-1">
+                    CV Optimizer
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                    Get AI-powered suggestions to improve your resume for specific job postings
                 </p>
             </div>
 
@@ -157,21 +150,18 @@ University of Technology`)
                                         Analyzing...
                                     </>
                                 ) : (
-                                    <>
-                                        <Sparkles className="mr-2 h-4 w-4" />
-                                        Analyze & Optimize
-                                    </>
+                                    "Analyze & Optimize"
                                 )}
                             </Button>
                         </div>
                     </div>
                 ) : (
-                    // Results Section
-                    <div className="space-y-6 max-w-6xl">
-                        {/* Score Comparison */}
+                    // Results Section - Core Features Only
+                    <div className="space-y-6 max-w-4xl mx-auto">
+                        {/* Score Comparison - Core Value */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-card border rounded-xl p-6">
-                                <p className="text-sm text-muted-foreground mb-2">Original Match Score</p>
+                                <p className="text-sm text-muted-foreground mb-2">Current Match Score</p>
                                 <div className="flex items-baseline gap-2">
                                     <p className="text-4xl font-bold">{result.originalScore}%</p>
                                     <Badge variant="secondary">Before</Badge>
@@ -188,7 +178,7 @@ University of Technology`)
                                 <div className="absolute top-2 right-2">
                                     <TrendingUp className="h-5 w-5 text-green-500" />
                                 </div>
-                                <p className="text-sm text-muted-foreground mb-2">Optimized Match Score</p>
+                                <p className="text-sm text-muted-foreground mb-2">Potential Match Score</p>
                                 <div className="flex items-baseline gap-2">
                                     <p className="text-4xl font-bold text-green-600">{result.optimizedScore}%</p>
                                     <Badge className="bg-green-500">
@@ -204,31 +194,17 @@ University of Technology`)
                             </div>
                         </div>
 
-                        {/* Missing Keywords */}
-                        {result.missingKeywords.length > 0 && (
-                            <div className="bg-card border rounded-xl p-6">
-                                <h3 className="font-semibold mb-3">Missing Keywords</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {result.missingKeywords.map((keyword, idx) => (
-                                        <Badge key={idx} variant="outline" className="text-sm">
-                                            {keyword}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Suggestions */}
+                        {/* Top 3 Suggestions Only */}
                         <div className="bg-card border rounded-xl p-6">
-                            <h3 className="font-semibold mb-4">AI Suggestions</h3>
+                            <h3 className="font-semibold mb-4">Top Recommendations</h3>
                             <div className="space-y-3">
-                                {result.suggestions.map((suggestion, idx) => (
+                                {result.suggestions.slice(0, 3).map((suggestion, idx) => (
                                     <div key={idx} className="flex gap-4 p-4 bg-muted/50 rounded-lg">
                                         <div className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 ${suggestion.impact === 'high' ? 'bg-red-500/10 text-red-500' :
-                                                suggestion.impact === 'medium' ? 'bg-yellow-500/10 text-yellow-500' :
-                                                    'bg-blue-500/10 text-blue-500'
+                                            suggestion.impact === 'medium' ? 'bg-yellow-500/10 text-yellow-500' :
+                                                'bg-blue-500/10 text-blue-500'
                                             }`}>
-                                            <Sparkles className="h-5 w-5" />
+                                            <FileText className="h-5 w-5" />
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2 mb-1">
@@ -245,32 +221,15 @@ University of Technology`)
                             </div>
                         </div>
 
-                        {/* Optimized CV Preview */}
-                        <div className="bg-card border rounded-xl p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-semibold">Optimized CV Preview</h3>
-                                <Button variant="outline" size="sm">
-                                    <Download className="mr-2 h-4 w-4" />
-                                    Download
-                                </Button>
-                            </div>
-                            <div className="bg-muted/50 rounded-lg p-6 font-mono text-sm whitespace-pre-wrap max-h-[400px] overflow-y-auto">
-                                {result.optimizedText}
-                            </div>
-                        </div>
-
                         {/* Actions */}
                         <div className="flex gap-3">
                             <Button onClick={handleReset} variant="outline" className="flex-1">
-                                Start New Analysis
-                            </Button>
-                            <Button className="flex-1">
-                                Apply Optimizations
+                                Analyze Another CV
                             </Button>
                         </div>
                     </div>
                 )}
             </div>
-        </motion.div>
+        </div>
     )
 }

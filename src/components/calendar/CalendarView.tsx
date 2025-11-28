@@ -12,9 +12,8 @@ import {
     endOfWeek,
     parseISO,
 } from "date-fns"
-import { ChevronLeft, ChevronRight, Search, Calendar as CalendarIcon, MapPin } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "../ui/button"
-import { Input } from "../ui/input"
 import { cn } from "../../lib/utils"
 import { useJobStore, type JobApplication } from "../../store/useJobStore"
 import { JobDetailsDialog } from "../dashboard/JobDetailsDialog"
@@ -102,7 +101,6 @@ function DroppableDay({ date, children, isCurrentMonth, isToday, isSelected, onC
 export function CalendarView() {
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState(new Date())
-    const [searchQuery, setSearchQuery] = useState("")
 
     const { applications, updateApplication } = useJobStore()
     const [selectedJob, setSelectedJob] = useState<JobApplication | null>(null)
@@ -155,51 +153,38 @@ export function CalendarView() {
         setSelectedDate(today)
     }
 
-    // Filter logic for side panel
-    const sidePanelJobs = applications.filter(app => {
-        if (searchQuery) {
-            return (
-                app.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                app.role.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-        }
-        return isSameDay(parseISO(app.date), selectedDate)
-    })
-
     return (
         <div className="flex h-full bg-card rounded-xl border shadow-sm overflow-hidden">
-            {/* Main Calendar Area */}
-            <div className="flex-1 flex flex-col min-w-0 border-r">
+            {/* Main Calendar Area - Core Feature */}
+            <div className="flex-1 flex flex-col min-w-0">
                 <div className="flex items-center justify-between p-4 border-b">
-                    <div className="flex items-center gap-4">
-                        <h2 className="text-lg font-semibold">
-                            {format(currentDate, "MMMM yyyy")}
-                        </h2>
-                        <div className="flex items-center rounded-md border bg-background shadow-sm">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={prevMonth}
-                                className="h-8 w-8 rounded-none rounded-l-md border-r"
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                onClick={goToToday}
-                                className="h-8 px-3 rounded-none text-xs font-medium"
-                            >
-                                Today
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={nextMonth}
-                                className="h-8 w-8 rounded-none rounded-r-md border-l"
-                            >
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
+                    <h2 className="text-lg font-semibold">
+                        {format(currentDate, "MMMM yyyy")}
+                    </h2>
+                    <div className="flex items-center rounded-md border bg-background shadow-sm">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={prevMonth}
+                            className="h-8 w-8 rounded-none rounded-l-md border-r"
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            onClick={goToToday}
+                            className="h-8 px-3 rounded-none text-xs font-medium"
+                        >
+                            Today
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={nextMonth}
+                            className="h-8 w-8 rounded-none rounded-r-md border-l"
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
                     </div>
                 </div>
 
@@ -242,6 +227,7 @@ export function CalendarView() {
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     setSelectedJob(job)
+                                                    setDialogOpen(true)
                                                 }}
                                             />
                                         ))}
@@ -263,128 +249,6 @@ export function CalendarView() {
                 </div>
             </div>
 
-            {/* Side Panel */}
-            <div className="w-[320px] flex flex-col bg-muted/10 border-l">
-                <div className="p-4 border-b space-y-4">
-                    <div className="relative">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search events..."
-                            value={searchQuery}
-                            onChange={(e) => {
-                                setSearchQuery(e.target.value)
-                                setSelectedJob(null) // Clear selection on search
-                            }}
-                            className="pl-8 bg-background"
-                        />
-                    </div>
-                    {!searchQuery && !selectedJob && (
-                        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                            <CalendarIcon className="h-4 w-4" />
-                            {format(selectedDate, "EEEE, MMMM do")}
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4">
-                    {selectedJob ? (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <h3 className="font-bold text-xl">{selectedJob.company}</h3>
-                                    <p className="text-muted-foreground">{selectedJob.role}</p>
-                                </div>
-                                <Button variant="outline" size="sm" onClick={() => setDialogOpen(true)}>
-                                    Edit
-                                </Button>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3 text-sm">
-                                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                        <CalendarIcon className="h-4 w-4" />
-                                    </div>
-                                    <div>
-                                        <p className="font-medium">Date & Time</p>
-                                        <p className="text-muted-foreground">
-                                            {format(parseISO(selectedJob.date), "MMMM do, yyyy")}
-                                            {selectedJob.time && ` at ${selectedJob.time}`}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-3 text-sm">
-                                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                        <MapPin className="h-4 w-4" />
-                                    </div>
-                                    <div>
-                                        <p className="font-medium">Location</p>
-                                        <p className="text-muted-foreground">{selectedJob.location || "Remote"}</p>
-                                    </div>
-                                </div>
-
-                                <div className="p-3 rounded-lg bg-secondary/50 border space-y-2">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">Status</span>
-                                        <span className="font-medium">{selectedJob.status}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">Salary</span>
-                                        <span className="font-medium">{selectedJob.salary || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">Source</span>
-                                        <span className="font-medium">{selectedJob.source || "N/A"}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Button variant="ghost" className="w-full" onClick={() => setSelectedJob(null)}>
-                                <ChevronLeft className="mr-2 h-4 w-4" /> Back to list
-                            </Button>
-                        </div>
-                    ) : (
-                        <div className="space-y-3">
-                            {sidePanelJobs.length === 0 ? (
-                                <div className="text-center py-8 text-muted-foreground text-sm">
-                                    {searchQuery ? "No events found" : "No events for this day"}
-                                </div>
-                            ) : (
-                                sidePanelJobs.map(job => (
-                                    <div
-                                        key={job.id}
-                                        onClick={() => setSelectedJob(job)}
-                                        className="p-3 rounded-lg border bg-card hover:shadow-sm transition-all cursor-pointer group"
-                                    >
-                                        <div className="flex items-start justify-between mb-1">
-                                            <h4 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                                                {job.company}
-                                            </h4>
-                                            <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
-                                                {job.status}
-                                            </span>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground mb-2">{job.role}</p>
-                                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                                            <div className="flex items-center gap-1">
-                                                <CalendarIcon className="h-3 w-3" />
-                                                {format(parseISO(job.date), "MMM d")}
-                                            </div>
-                                            {job.time && (
-                                                <div className="flex items-center gap-1">
-                                                    <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-                                                    {job.time}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    )}
-                </div>
-            </div>
-
             {selectedJob && (
                 <JobDetailsDialog
                     job={selectedJob}
@@ -392,7 +256,7 @@ export function CalendarView() {
                     onOpenChange={(open) => {
                         setDialogOpen(open)
                         if (!open) {
-                            // Optional: keep selectedJob to show details after edit, or null to go back
+                            setSelectedJob(null)
                         }
                     }}
                 />
